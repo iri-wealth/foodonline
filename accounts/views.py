@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .forms import UserForm
-from .models import User
+from .models import User, UserProfile
 from django.contrib import messages
+from vendor.forms import VendorForm
+
+
+
 # Create your views here.
 def registerUser(request):
     if request.method == 'POST':
@@ -32,3 +36,4 @@ def registerUser(request):
         'form': form
     }
     return render(request, 'accounts/registerUser.html', context=context)
+
