@@ -77,6 +77,19 @@ class User(AbstractBaseUser):
         # Simplest possible answer: Yes, always
         return True
 
+    # we have to decide if a user is a CUSTOMER or VENDOR:
+    def get_role(self):
+        if self.role == 1:
+            user_role = 'Vendor'
+        elif self.role == 2:
+            user_role = 'Customer'
+        else:
+            user_role = 'Superadmin'
+        return user_role
+
+
+
+
 
 class UserProfile(models.Model):
     user = OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)

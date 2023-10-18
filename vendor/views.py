@@ -8,7 +8,10 @@ from .forms import VendorForm
 
 
 def registerVendor(request):
-    if request.method == 'POST':
+    if request.user.is_authenticated:
+        messages.warning(request, 'You are already logged in')
+        return redirect('myAccount')
+    elif request.method == 'POST':
         #store data ad create a user
         form = UserForm(request.POST)
         vendor_form = VendorForm(request.POST, request.FILES)
@@ -27,7 +30,7 @@ def registerVendor(request):
             vendor.user_profile = user_profile
             vendor.save()
             messages.success(request, 'Your restaurant account was registered successfully!')
-            return redirect('registerVendor')
+            return redirect('accounts/vendorDashboard')
         else:
             print(form.errors)
     form = UserForm()
