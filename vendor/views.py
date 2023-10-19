@@ -1,10 +1,12 @@
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from accounts.forms import UserForm
 from accounts.models import User, UserProfile
 from django.contrib import messages
 from .forms import VendorForm
-
+from accounts.utils import send_verification_email
+from accounts.views import check_role_vendor
 
 
 def registerVendor(request):
@@ -29,8 +31,12 @@ def registerVendor(request):
             user_profile = UserProfile.objects.get(user=user)
             vendor.user_profile = user_profile
             vendor.save()
-            messages.success(request, 'Your restaurant account was registered successfully!')
-            return redirect('accounts/vendorDashboard')
+            # Send verification email to vendor
+            mail_subject = 'Please activate your account.'
+            email_template = 'accounts/emails/account_verification_email.html'
+            send_verification_email(request, user, mail_subject, email_template)
+            messages.success(request, 'Your restaurant account was registered successfully! Please wait for approval.')
+            return redirect('vendorDashboard')
         else:
             print(form.errors)
     form = UserForm()
@@ -40,3 +46,8 @@ def registerVendor(request):
         'vendor_form': vendor_form
     }
     return render(request, 'vendor/registerVendor.html', context=context)
+
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
+def vendorDashboard(request):
+    return render(request, 'vendor/vendorDashboard.html')

@@ -40,6 +40,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    DoesNotExist = 'Does not exist'
     VENDOR = 1
     CUSTOMER = 2
     ROLE_CHOICE = ((VENDOR, 'Vendor'), (CUSTOMER, 'Customer'))
