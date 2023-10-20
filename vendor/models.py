@@ -19,6 +19,11 @@ class Vendor(models.Model):
     def __str__(self):
         return self.vendor_name
 
+
+
+
+
+
     def save(self, *args, **kwargs):
         if self.pk is not None:
             # Update

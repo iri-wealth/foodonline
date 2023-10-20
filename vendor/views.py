@@ -1,14 +1,14 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from accounts.forms import UserForm
+from accounts.forms import UserForm, UserProfileForm
 from accounts.models import User, UserProfile
 from django.contrib import messages
 from .forms import VendorForm
 from accounts.utils import send_verification_email
 from accounts.views import check_role_vendor
-
 from .models import Vendor
+
 
 
 def registerVendor(request):
@@ -59,5 +59,13 @@ def vendorDashboard(request):
     return render(request, 'vendor/vendorDashboard.html', context=context)
 
 def vendorProfile(request):
+    profile = get_object_or_404(UserProfile, user=request.user)
+    vendor = get_object_or_404(Vendor, user=request.user)
+    profile_form = UserProfileForm(profile)
+    vendor_form = VendorForm(vendor)
+    context = {
+         'profile_form': profile_form,
+         'vendor_form': vendor_form,
+    }
 
-    return render(request,'vendor/vendorProfile.html')
+    return render(request,'vendor/vendorProfile.html', context=context)
