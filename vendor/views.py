@@ -8,6 +8,8 @@ from .forms import VendorForm
 from accounts.utils import send_verification_email
 from accounts.views import check_role_vendor
 
+from .models import Vendor
+
 
 def registerVendor(request):
     if request.user.is_authenticated:
@@ -50,4 +52,12 @@ def registerVendor(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def vendorDashboard(request):
-    return render(request, 'vendor/vendorDashboard.html')
+    vendor = Vendor.objects.get(user=request.user)
+    context = {
+        'vendor': vendor,
+    }
+    return render(request, 'vendor/vendorDashboard.html', context=context)
+
+def vendorProfile(request):
+
+    return render(request,'vendor/vendorProfile.html')

@@ -112,6 +112,7 @@ def myAccount(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_customer)
 def customerDashboard(request):
+
     return render(request, 'accounts/customerDashboard.html')
 
 def forgot_password(request):
