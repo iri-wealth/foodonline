@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from accounts.forms import UserForm, UserProfileForm
 from accounts.models import User, UserProfile
 from django.contrib import messages
+from django.utils.text import slugify
+
 from .forms import VendorForm
 from accounts.utils import send_verification_email
 from accounts.views import check_role_vendor
@@ -30,6 +32,8 @@ def registerVendor(request):
             user.save()
             vendor = vendor_form.save(commit=False)
             vendor.user = user
+            vendor_name = vendor_form.cleaned_data['vendor_name']
+            vendor.vendor_slug = slugify(vendor_name) + '-' + str(user.id)
             user_profile = UserProfile.objects.get(user=user)
             vendor.user_profile = user_profile
             vendor.save()
@@ -41,12 +45,13 @@ def registerVendor(request):
             return redirect('vendorDashboard')
         else:
             print(form.errors)
-    form = UserForm()
-    vendor_form = VendorForm()
-    context = {
+    else:
+        form = UserForm()
+        vendor_form = VendorForm()
+        context = {
         'form': form,
         'vendor_form': vendor_form
-    }
+        }
     return render(request, 'vendor/registerVendor.html', context=context)
 
 @login_required(login_url='login')
@@ -58,14 +63,32 @@ def vendorDashboard(request):
     }
     return render(request, 'vendor/vendorDashboard.html', context=context)
 
+
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
 def vendorProfile(request):
     profile = get_object_or_404(UserProfile, user=request.user)
     vendor = get_object_or_404(Vendor, user=request.user)
-    profile_form = UserProfileForm(profile)
-    vendor_form = VendorForm(vendor)
-    context = {
-         'profile_form': profile_form,
-         'vendor_form': vendor_form,
-    }
 
+    if request.method == 'POST':
+        profile_form = UserProfileForm(request.POST, request.FILES,
+                                       instance=profile)
+        vendor_form = VendorForm(request.POST, request.FILES, instance=vendor)
+        if profile_form.is_valid() and vendor_form.is_valid():
+            profile_form.save()
+            vendor_form.save()
+            messages.success(request, 'Restaurant data has been updated!')
+            return redirect('vendorProfile')
+        else:
+            print(profile_form.errors)
+            print(vendor_form.errors)
+    else:
+        profile_form = UserProfileForm(instance=profile)
+        vendor_form = VendorForm(instance=vendor)
+    context = {
+        'profile_form': profile_form,
+        'vendor_form': vendor_form,
+        'profile': profile,
+        'vendor': vendor,
+    }
     return render(request,'vendor/vendorProfile.html', context=context)

@@ -4,6 +4,7 @@ from accounts.models import User, UserProfile
 from accounts.utils import send_notification
 
 
+
 # Create your models here.
 class Vendor(models.Model):
     user = models.OneToOneField(User,
@@ -11,7 +12,8 @@ class Vendor(models.Model):
     user_profile = models.OneToOneField(UserProfile,
                                         related_name='userprofile', on_delete=models.CASCADE)
     vendor_name = models.CharField(max_length=55)
-    vendor_license = models.ImageField(upload_to='vendor/license', blank=True, null=True)
+    vendor_slug = models.SlugField(max_length=55, unique=True, default=0)
+    vendor_license = models.ImageField(upload_to='vendor/license')
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -33,6 +35,7 @@ class Vendor(models.Model):
                 context = {
                     'user': self.user,
                     'is_approved': self.is_approved,
+                    'to_email': self.user.email,
                 }
                 if self.is_approved == True:
                     # send email notification to vendor

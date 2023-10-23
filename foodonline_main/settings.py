@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import smtplib
 from pathlib import Path
 from decouple import config
+from django import conf
+import os
 import smtplib
 import django_smtp_ssl
 

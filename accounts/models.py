@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.db.models import OneToOneField
+from django.db.models.fields.related import ForeignKey, OneToOneField
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 
@@ -14,6 +14,7 @@ class UserManager(BaseUserManager):
 
         if not username:
             raise ValueError('Users must have a username')
+
         user = self.model(
             first_name=first_name,
             last_name=last_name,
@@ -35,6 +36,7 @@ class UserManager(BaseUserManager):
         user.is_admin = True
         user.is_staff = True
         user.is_active = True
+        user.is_superadmin = True
         user.save(using=self._db)
         return user
 
@@ -50,6 +52,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(max_length=255, unique=True)
     phone_number = models.CharField(max_length=55, blank=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICE, blank=True, null=True)
+
     # here there are django-requred fields in the DB
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
@@ -58,7 +61,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
+    is_superadmin = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
@@ -84,8 +87,6 @@ class User(AbstractBaseUser):
             user_role = 'Vendor'
         elif self.role == 2:
             user_role = 'Customer'
-        else:
-            user_role = 'Superadmin'
         return user_role
 
 
@@ -97,8 +98,7 @@ class UserProfile(models.Model):
     profile_picture = models.ImageField(upload_to='users/profile_pictures',
                                         blank=True, null=True)
     cover_photo = models.ImageField(upload_to='users/cover_photos', blank=True, null=True)
-    address_line_1 = models.CharField(max_length=55, blank=True, null=True)
-    address_line_2 = models.CharField(max_length=55, blank=True, null=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=25, blank=True, null=True)
     country = models.CharField(max_length=15, blank=True, null=True)
     state = models.CharField(max_length=15, blank=True, null=True)
@@ -108,11 +108,15 @@ class UserProfile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def full_address(self):
-        return f'{self.address_line_1}, {self.city}, {self.country}'
+    #def full_address(self):
+        #return f'{self.address_line_1}, {self.city}, {self.country}'
 
     def __str__(self):
         return self.user.username
+
+    def save(self, *args, **kwargs):
+
+        return super(UserProfile, self).save(*args, **kwargs)
 
 
 
