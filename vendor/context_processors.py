@@ -10,4 +10,4 @@ def get_vendor(request):
     return dict(vendor=vendor)
 
 def get_google_api_key(request):
-    return {'GOOGLE_MAPS_API_KEY': settings.GOOGLE_MAPS_API_KEY}
+    return {'GOOGLE_API_KEY': settings.GOOGLE_API_KEY}

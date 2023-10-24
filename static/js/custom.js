@@ -76,11 +76,11 @@ $(document).ready(function(){
     // add to cart
     $('.add_to_cart').on('click', function(e){
         e.preventDefault();
-        
+
         food_id = $(this).attr('data-id');
         url = $(this).attr('data-url');
-        
-       
+
+
         $.ajax({
             type: 'GET',
             url: url,
@@ -118,12 +118,12 @@ $(document).ready(function(){
     // decrease cart
     $('.decrease_cart').on('click', function(e){
         e.preventDefault();
-        
+
         food_id = $(this).attr('data-id');
         url = $(this).attr('data-url');
         cart_id = $(this).attr('id');
-        
-        
+
+
         $.ajax({
             type: 'GET',
             url: url,
@@ -149,8 +149,8 @@ $(document).ready(function(){
                         removeCartItem(response.qty, cart_id);
                         checkEmptyCart();
                     }
-                    
-                } 
+
+                }
             }
         })
     })
@@ -159,11 +159,11 @@ $(document).ready(function(){
     // DELETE CART ITEM
     $('.delete_cart').on('click', function(e){
         e.preventDefault();
-        
+
         cart_id = $(this).attr('data-id');
         url = $(this).attr('data-url');
-        
-        
+
+
         $.ajax({
             type: 'GET',
             url: url,
@@ -183,7 +183,7 @@ $(document).ready(function(){
 
                     removeCartItem(0, cart_id);
                     checkEmptyCart();
-                } 
+                }
             }
         })
     })
@@ -195,7 +195,7 @@ $(document).ready(function(){
                 // remove the cart item element
                 document.getElementById("cart-item-"+cart_id).remove()
             }
-        
+
     }
 
     // Check if the cart is empty
@@ -262,7 +262,7 @@ $(document).ready(function(){
                         }else{
                             html = '<tr id="hour-'+response.id+'"><td><b>'+response.day+'</b></td><td>'+response.from_hour+' - '+response.to_hour+'</td><td><a href="#" class="remove_hour" data-url="/vendor/opening-hours/remove/'+response.id+'/">Remove</a></td></tr>';
                         }
-                        
+
                         $(".opening_hours").append(html)
                         document.getElementById("opening_hours").reset();
                     }else{
@@ -279,7 +279,7 @@ $(document).ready(function(){
     $(document).on('click', '.remove_hour', function(e){
         e.preventDefault();
         url = $(this).attr('data-url');
-        
+
         $.ajax({
             type: 'GET',
             url: url,
@@ -291,5 +291,5 @@ $(document).ready(function(){
         })
     })
 
-   // document ready close 
+   // document ready close
 });
