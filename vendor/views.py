@@ -45,7 +45,7 @@ def registerVendor(request):
             email_template = 'accounts/emails/account_verification_email.html'
             send_verification_email(request, user, mail_subject, email_template)
             messages.success(request, 'Your restaurant account was registered successfully! Please wait for approval.')
-            return redirect('vendorDashboard')
+            return redirect('login')
         else:
             print(form.errors)
     else:
@@ -137,6 +137,8 @@ def add_category(request):
             print(form.errors)
     else:
         form = CategoryForm()
+
+
     context = {
         'form': form,
     }
@@ -160,6 +162,7 @@ def edit_category(request, pk=None):
             print(form.errors)
     else:
         form = CategoryForm(instance=category)
+
     context = {
         'form': form,
         'category': category,
