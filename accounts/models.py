@@ -5,6 +5,7 @@ from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 
 
+
 # Create your models here.
 class UserManager(BaseUserManager):
     def create_user(self, first_name, last_name, username, email, password=None):
@@ -117,7 +118,6 @@ class UserProfile(models.Model):
     def save(self, *args, **kwargs):
 
         return super(UserProfile, self).save(*args, **kwargs)
-
 
 
 

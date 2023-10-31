@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from accounts.forms import UserForm, UserProfileForm
@@ -10,8 +11,11 @@ from accounts.utils import send_verification_email
 from accounts.views import check_role_vendor
 from .models import Vendor
 from menu.models import Category, FoodItem
-
 from menu.forms import CategoryForm, FoodItemForm
+from datetime import date
+
+from marketplace.models import Cart
+
 
 def get_vendor(request):
     vendor = Vendor.objects.get(user=request.user)
@@ -236,3 +240,26 @@ def delete_food(request, pk=None):
     food.delete()
     messages.success(request, 'Food Item has been deleted successfully!')
     return redirect('fooditems_by_category', food.category.id)
+
+def vendor_detail(request, pk):
+    vendor = get_object_or_404(Vendor, pk=pk)
+
+    categories = Category.objects.filter(vendor=vendor).prefetch_related(
+        Prefetch('fooditems', queryset=FoodItem.objects.filter(
+            is_available=True)))
+
+    # Check current day's opening hours.
+    today_date = date.today()
+    today = today_date.isoweekday()
+    if request.user.is_authenticated:
+        cart_items = Cart.objects.filter(user=request.user)
+    else:
+        cart_items = None
+    context = {
+        'vendor': vendor,
+        'categories': categories,
+        'today': today,
+        'cart_items': cart_items
+
+    }
+    return render(request, 'vendor/vendor_detail.html', context)

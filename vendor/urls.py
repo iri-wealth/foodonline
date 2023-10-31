@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .models import Vendor
 
 
 urlpatterns = [
@@ -9,6 +10,7 @@ urlpatterns = [
     path('vendorProfile/', views.vendorProfile, name='vendorProfile'),
     path('menu_builder/', views.menu_builder, name='menu_builder'),
     path('menu_builder/category/<int:pk>/', views.fooditems_by_category, name='fooditems_by_category'),
+    path('vendor_detail/<int:pk>/', views.vendor_detail, name='vendor_detail'),
 
     #Category CRUD
     path('menu-builder/category/add/', views.add_category, name='add_category'),

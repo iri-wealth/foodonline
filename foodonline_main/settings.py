@@ -48,6 +48,10 @@ INSTALLED_APPS = [
     'accounts',
     'vendor',
     'menu',
+    'marketplace',
+    'orders',
+
+
 ]
 
 MIDDLEWARE = [
@@ -58,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'orders.request_object.RequestObjectMiddleware', #custome middleware was
+    # created to access the object in orders.models.py
 ]
 
 ROOT_URLCONF = 'foodonline_main.urls'
@@ -75,6 +81,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'vendor.context_processors.get_vendor',
                 'vendor.context_processors.get_google_api_key',
+                'marketplace.context_processors.get_cart_counter',
+                'marketplace.context_processors.get_cart_amounts',
+
 
             ],
         },

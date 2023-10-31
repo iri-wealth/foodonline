@@ -18,3 +18,5 @@ class FoodItemAdmin(admin.ModelAdmin):
                      'vendor__vendor_name', 'price')
     list_filter = ('is_available',)
 admin.site.register(FoodItem, FoodItemAdmin)
+
+
